@@ -1,5 +1,7 @@
 import babel from 'rollup-plugin-babel'
 import serve from 'rollup-plugin-serve'
+import livereload from 'rollup-plugin-livereload'
+
 export default {
   input: './src/index.js', // 以哪个文件作为打包的入口
   output: {
@@ -9,6 +11,7 @@ export default {
     sourcemap: true, // es6-> es5  开启源码调试 可以找到源代码的报错位置
   },
   plugins: [
+    livereload(),
     // 使用的插件
     babel({
       exclude: 'node_modules/**',
