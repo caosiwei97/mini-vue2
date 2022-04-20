@@ -7,6 +7,8 @@ export function patch(oldVnode, vnode) {
 
     parentEle.insertBefore(elm, oldVnode.nextSibling)
     parentEle.removeChild(oldVnode)
+
+    return elm
   }
 }
 

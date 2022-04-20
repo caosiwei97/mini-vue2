@@ -1,10 +1,11 @@
+import Watcher from './observer/watcher'
 import { patch } from './vdom/patch'
 
 export function lifecycleMixin(Vue) {
   Vue.prototype._update = function (vnode) {
     const vm = this
 
-    patch(vm.$el, vnode)
+    vm.$el = patch(vm.$el, vnode)
   }
 }
 
@@ -17,5 +18,13 @@ export function mountComponent(vm, el) {
     vm._update(vm._render())
   }
 
-  updateComponent()
+  // 每个组件都有一个渲染 watcher
+  new Watcher(
+    vm,
+    updateComponent,
+    () => {
+      console.log('视图更新')
+    },
+    true,
+  ) // 渲染 Watcher
 }

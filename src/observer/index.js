@@ -1,5 +1,6 @@
 import { def, hasOwn, isObject } from '../utils'
 import { arrayMethods } from './array'
+import Dep from './dep'
 
 class Observer {
   constructor(data) {
@@ -28,21 +29,29 @@ class Observer {
   }
 
   defineReactive(data, key, value) {
+    const dep = new Dep()
     // value 可能也是对象
     observe(value)
 
     Object.defineProperty(data, key, {
       get() {
-        console.log('getter 触发', value)
+        // 需要 watcher 和 dep 关联起来
+        // 模板里访问了属性
+        if (Dep.target) {
+          dep.depend() // 通知 dep 存储 watcher
+        }
+
         return value
       },
       set(newVal) {
         if (newVal === value) {
           return
         }
-
+        value = newVal
         // value 可能也是对象
-        observe(newValue)
+        observe(newVal)
+        // 更新视图
+        dep.notify()
       },
     })
   }

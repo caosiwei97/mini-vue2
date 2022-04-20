@@ -46,7 +46,7 @@ export function initMixin(Vue) {
     //     )
     //   }
     // })
-    console.log(options.render)
+    // console.log(options.render)
 
     // 挂载组件
     mountComponent(vm, el)
