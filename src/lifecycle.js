@@ -1,12 +1,17 @@
 import Watcher from './observer/watcher'
+import { nextTick } from './utils'
 import { patch } from './vdom/patch'
 
 export function lifecycleMixin(Vue) {
+  // 更新视图
   Vue.prototype._update = function (vnode) {
     const vm = this
 
     vm.$el = patch(vm.$el, vnode)
   }
+
+  // 异步更新
+  Vue.prototype.$nextTick = nextTick
 }
 
 // 更新函数，数据变化后再次调用此函数

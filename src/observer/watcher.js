@@ -1,4 +1,5 @@
 import { popTarget, pushTarget } from './dep'
+import { queueWatcher } from './scheduler'
 
 let id = 0
 
@@ -34,6 +35,12 @@ class Watcher {
   }
 
   update() {
+    // 多次更新数据时，最后只做一次更新
+    // 所以需要先缓存当前渲染 Watcher -> 异步更新
+    queueWatcher(this)
+  }
+
+  run() {
     this.get()
   }
 }

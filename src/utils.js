@@ -19,3 +19,21 @@ export function def(obj, key, val, enumerable) {
 export function hasOwn(obj, key) {
   return Object.prototype.hasOwnProperty.call(obj, key)
 }
+
+// 存放内部 next 回调和用户传进来的回调，保证执行顺序
+const cbs = []
+let wating = false
+
+export function nextTick(cb) {
+  cbs.push(cb)
+
+  if (!wating) {
+    queueMicrotask(flushCallbacks, 0)
+    wating = true
+  }
+}
+
+function flushCallbacks() {
+  cbs.forEach((cb) => cb())
+  wating = false
+}

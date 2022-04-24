@@ -41,7 +41,10 @@ methodsToPatch.forEach((method) => {
     if (inserted) {
       ob.observeArray(inserted)
     }
-    // 新增或删除的数据需要再次定义响应式
+
+    // 通知视图更新
+    ob.dep.notify()
+
     return ret
   })
 })

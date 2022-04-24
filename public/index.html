@@ -19,10 +19,21 @@
           title: 'foo',
           bar: {
             baz: 'baz',
-            arr: [{ foo: 'foo' }, { foo: 'bar' }],
+            arr: [[111]],
           },
         },
       })
+
+      setTimeout(() => {
+        vm.title = '1'
+        vm.title = '2'
+        vm.title = '3'
+        vm.title = '4'
+        vm.title = '5'
+        vm.$nextTick(() => {
+          console.log(vm.$el)
+        })
+      }, 1000)
     </script>
   </body>
 </html>
