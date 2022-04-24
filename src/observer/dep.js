@@ -16,7 +16,7 @@ class Dep {
     }
   }
 
-  addSubs(watcher) {
+  addSub(watcher) {
     this.subs.push(watcher)
   }
 

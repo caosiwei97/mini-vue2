@@ -12,8 +12,8 @@ export function initMixin(Vue) {
     initState(vm)
 
     // 挂载将数据挂载到这个模板
-    if (vm.$options.$el) {
-      vm.$mount(vm.$options.$el)
+    if (vm.$options.el) {
+      vm.$mount(vm.$options.el)
     }
   }
 
