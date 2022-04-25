@@ -12,27 +12,39 @@
     </div>
 
     <script src="/dist/umd/vue.js"></script>
-    <script>
+    <script defer>
       const vm = new Vue({
         el: '#app',
         data: {
           title: 'foo',
+          age: 18,
           bar: {
             baz: 'baz',
-            arr: [[111]],
+            arr: [1, 2, 3],
+          },
+        },
+        watch: {
+          title(newVal, oldVal) {
+            console.log(newVal, oldVal)
+          },
+          age: [
+            function (newVal, oldVal) {
+              console.log(newVal, oldVal)
+            },
+            function (newVal, oldVal) {
+              console.log(newVal, oldVal)
+            },
+          ],
+          'bar.baz'(newVal, oldVal) {
+            console.log(newVal, oldVal)
           },
         },
       })
 
       setTimeout(() => {
-        vm.title = '1'
-        vm.title = '2'
-        vm.title = '3'
-        vm.title = '4'
-        vm.title = '5'
-        vm.$nextTick(() => {
-          console.log(vm.$el)
-        })
+        vm.title = 'newfoo'
+        vm.age = 20
+        vm.bar.baz = 'newfoo'
       }, 1000)
     </script>
   </body>
