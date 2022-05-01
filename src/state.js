@@ -1,3 +1,4 @@
+import Dep from './observer/dep'
 import { observe } from './observer/index'
 import Watcher from './observer/watcher'
 import { hasOwn, isFunction } from './utils'
@@ -11,6 +12,10 @@ export function initState(vm) {
 
   if (opts.watch) {
     initWatch(vm, opts.watch)
+  }
+
+  if (opts.computed) {
+    initComputed(vm, opts.computed)
   }
 }
 
@@ -69,6 +74,55 @@ function initWatch(vm, watch) {
   }
 }
 
+function initComputed(vm, computed) {
+  const watchers = (vm._computedWatchers = {})
+
+  for (const key in computed) {
+    if (hasOwn(computed, key)) {
+      const fnOrObj = computed[key]
+
+      let getter = typeof fnOrObj === 'function' ? fnOrObj : fnOrObj.get
+
+      // 将 watcher 与属性做映射
+      watchers[key] = new Watcher(vm, getter, () => {}, {
+        lazy: true,
+      })
+
+      // 将属性放到 vm 上
+      defineComputed(vm, key, fnOrObj)
+    }
+  }
+}
+
 function createWatcher(vm, key, handler) {
   return vm.$watch(key, handler)
+}
+
+function defineComputed(vm, key, userDef) {
+  let sharedProperty = {}
+
+  sharedProperty.get = createComputedGetter(key)
+  sharedProperty.set =
+    typeof userDef === 'object' ? userDef.set : function () {}
+
+  Object.defineProperty(vm, key, sharedProperty)
+}
+
+function createComputedGetter(key) {
+  return function computedGetter() {
+    // 拿到当前属性的 Watcher
+    let watcher = this._computedWatchers[key]
+
+    // 如果是脏值则计算
+    if (watcher.dirty) {
+      watcher.evaluate()
+    }
+
+    // 如果取完值，Dep.target 还有值，需要继续向上收集依赖
+    if (Dep.target) {
+      watcher.depend() // watcher 对应多个 dep
+    }
+
+    return watcher.value
+  }
 }

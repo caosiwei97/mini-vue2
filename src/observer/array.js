@@ -25,7 +25,6 @@ methodsToPatch.forEach((method) => {
     const ret = original.apply(this, args)
     const ob = this.__ob__
     // 再处理拦截（类似于装饰器模式中的 after）
-    console.log('数组拦截')
     let inserted
     switch (method) {
       case 'push':

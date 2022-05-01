@@ -15,7 +15,7 @@ class Watcher {
             // 'bar.baz'  => vm[bar][baz]
             let keys = exprOrFn.split('.') // ['bar', 'baz']
             let curKey
-            let obj = this.vm
+            let obj = this
 
             while ((curKey = keys.shift())) {
               // 这个地方会去触发 data 属性的依赖收集，把当前 Watcher 存到 dep
@@ -29,14 +29,18 @@ class Watcher {
     this.deps = [] // 存放 dep 对象
     this.depsId = new Set() // 存放唯一 depId，标识 dep 的唯一性
     this.user = !!options.user // 标识是否为用户 Watcher
+    this.lazy = !!options.lazy // 标识是否为用户 Watcher
+    this.dirty = this.lazy
 
-    this.value = this.get() // 默认初始化, 拿到初始值
+    // 默认初始化, 拿到初始值
+    // 如果是计算属性初始化就不调用
+    this.value = this.lazy ? undefined : this.get()
   }
 
   get() {
     // 每个属性收集自己的 Watcher，一个 Watcher 可以对应多个属性
     pushTarget(this)
-    const value = this.getter()
+    const value = this.getter.call(this.vm)
     popTarget()
 
     return value
@@ -56,6 +60,11 @@ class Watcher {
   update() {
     // 多次更新数据时，最后只做一次更新
     // 所以需要先缓存当前渲染 Watcher -> 异步更新
+
+    if (this.lazy) {
+      this.dirty = true
+    }
+
     queueWatcher(this)
   }
 
@@ -67,6 +76,19 @@ class Watcher {
     this.value = newValue
     if (this.user) {
       this.cb.call(this.vm, newValue, oldValue)
+    }
+  }
+
+  evaluate() {
+    this.dirty = false
+    this.value = this.get()
+  }
+
+  depend() {
+    let i = this.deps.length
+
+    while (i--) {
+      this.deps[i].depend()
     }
   }
 }
