@@ -12,6 +12,25 @@ strats.data =
     function mergeDataOrFn(parentVal, childVal) {
       return { ...parentVal, ...childVal }
     }
+
+strats._base = function (parentVal, childVal) {
+  return parentVal
+}
+
+strats.components = function (parentVal, childVal) {
+  const options = Object.create(parentVal)
+
+  if (childVal) {
+    for (const key in childVal) {
+      if (hasOwn(childVal, key)) {
+        options[key] = childVal[key]
+      }
+    }
+  }
+
+  return options
+}
+
 // 生命周期钩子合并
 function mergeHook(parentVal, childVal) {
   let res
@@ -91,7 +110,9 @@ export function mergeOptions(parent, child) {
     // 找到当前配置的策略
     const strat = strats[key]
 
-    options[key] = strat(parent[key], child[key])
+    if (strat) {
+      options[key] = strat(parent[key], child[key])
+    }
   }
 
   return options

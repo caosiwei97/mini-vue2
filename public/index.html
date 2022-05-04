@@ -19,6 +19,11 @@
           console.log('mixin mounted')
         },
       })
+
+      Vue.component('my-button', {
+        template: '<button>my-button</button>',
+      })
+
       const vm = new Vue({
         data: {
           title: 'foo',
@@ -53,6 +58,11 @@
         },
         mounted() {
           console.log('mounted')
+        },
+        components: {
+          'my-button': {
+            template: '<button>my-button</button>',
+          },
         },
       }).$mount('#app')
     </script>
