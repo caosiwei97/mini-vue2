@@ -16,6 +16,7 @@ export function lifecycleMixin(Vue) {
 
 // 更新函数，数据变化后再次调用此函数
 export function mountComponent(vm, el) {
+  callHook(vm, 'beforeMount')
   // 通过 render 生成虚拟 DOM -> 真实 DOM
   let updateComponent = () => {
     // 每次更新都会去调用 render 方法生成虚拟DOM
@@ -32,4 +33,19 @@ export function mountComponent(vm, el) {
     },
     true,
   ) // 渲染 Watcher
+
+  callHook(vm, 'mounted')
+
+  return vm
+}
+
+// 触发钩子
+export function callHook(vm, hook) {
+  const handlers = vm.$options[hook]
+
+  if (handlers) {
+    for (let i = 0, j = handlers.length; i < j; i++) {
+      handlers[i].call(vm)
+    }
+  }
 }

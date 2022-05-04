@@ -1,15 +1,18 @@
 import { compilerToFunction } from './compiler/index'
-import { mountComponent } from './lifecycle'
+import { callHook, mountComponent } from './lifecycle'
 import { initState } from './state'
+import { mergeOptions } from './utils'
 
 export function initMixin(Vue) {
   Vue.prototype._init = function (options) {
     const vm = this
 
-    vm.$options = options
+    vm.$options = mergeOptions(vm.constructor.options, options)
 
+    callHook(vm, 'beforeCreate')
     // 对数据进行初始化: data props computed watch
     initState(vm)
+    callHook(vm, 'created')
 
     // 挂载将数据挂载到这个模板
     if (vm.$options.el) {
@@ -49,6 +52,6 @@ export function initMixin(Vue) {
     // console.log(options.render)
 
     // 挂载组件
-    mountComponent(vm, el)
+    return mountComponent(vm, el)
   }
 }

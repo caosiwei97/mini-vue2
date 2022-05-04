@@ -14,8 +14,12 @@
 
     <script src="/dist/umd/vue.js"></script>
     <script defer>
+      Vue.mixin({
+        mounted() {
+          console.log('mixin mounted')
+        },
+      })
       const vm = new Vue({
-        el: '#app',
         data: {
           title: 'foo',
           age: 18,
@@ -47,14 +51,10 @@
             return this.firstName + this.lastName
           },
         },
-      })
-
-      setTimeout(() => {
-        // vm.title = 'newfoo'
-        // vm.age = 20
-        // vm.bar.baz = 'newfoo'
-        console.log(vm.fullname)
-      }, 1000)
+        mounted() {
+          console.log('mounted')
+        },
+      }).$mount('#app')
     </script>
   </body>
 </html>
