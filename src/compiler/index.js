@@ -5,7 +5,6 @@ import { parserHTML } from './parser'
 
 // html 字符串解析成对应的 ast
 export function compilerToFunction(template) {
-  // debugger
   let root = parserHTML(template)
   let code = gernerate(root)
   // 生成 render 函数

@@ -7,6 +7,7 @@ export function initMixin(Vue) {
   Vue.prototype._init = function (options) {
     const vm = this
 
+    // 合并配置：这里用 vm.constructor.options 比较好，可以获取组件的构造函数选项
     vm.$options = mergeOptions(vm.constructor.options, options)
 
     callHook(vm, 'beforeCreate')
@@ -34,9 +35,10 @@ export function initMixin(Vue) {
       // 没有 template 取 el
       if (!template && el) {
         template = el.outerHTML
-        let render = compilerToFunction(template)
-        options.render = render
       }
+
+      let render = compilerToFunction(template)
+      options.render = render
     }
 
     // ;(function anonymous() {

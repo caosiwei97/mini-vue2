@@ -40,7 +40,7 @@ function gen(el) {
     let text = el.text
     // 判断是否有插值
     if (!defaultTagRE.test(text)) {
-      return `_v(${text})`
+      return `_v(${JSON.stringify(text)})`
     }
 
     // hello {{arr}} world =>  'hello' + arr + 'world'
@@ -63,6 +63,8 @@ function gen(el) {
     if (lastIndex < text.length) {
       tokens.push(JSON.stringify(text.slice(lastIndex)))
     }
+
+    console.log(`_v(${tokens.join('+')})`)
 
     return `_v(${tokens.join('+')})`
   }

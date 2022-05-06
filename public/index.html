@@ -10,10 +10,11 @@
       <h2>hello {{ title }} wolrd</h2>
       <p>{{ bar }}</p>
       <p>{{ fullname }}</p>
+      <my-button></my-button>
     </div>
 
     <script src="/dist/umd/vue.js"></script>
-    <script defer>
+    <script>
       Vue.mixin({
         mounted() {
           console.log('mixin mounted')
@@ -21,7 +22,7 @@
       })
 
       Vue.component('my-button', {
-        template: '<button>my-button</button>',
+        template: '<button>my-button1</button>',
       })
 
       const vm = new Vue({
@@ -61,7 +62,7 @@
         },
         components: {
           'my-button': {
-            template: '<button>my-button</button>',
+            template: '<button>my-button2</button>',
           },
         },
       }).$mount('#app')

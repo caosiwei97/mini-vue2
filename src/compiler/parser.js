@@ -12,59 +12,9 @@ const defaultTagRE = /\{\{((?:.|\r?\n)+?)\}\}/g // 匹配 {{aaa}}
 const ELEMENT_TYPE = 1
 const TEXT_TYPE = 3
 
-let root = null // 树的根
-let stack = []
-// 创建 AST
-function createASTElement(tagName, attrs) {
-  return {
-    tag: tagName,
-    type: ELEMENT_TYPE,
-    children: [],
-    attrs,
-    parent: null,
-  }
-}
-
-// 将解析后的结果组装成一个栈，构建树
-function start(tagName, attributes) {
-  let parent = stack[stack.length - 1]
-  let ele = createASTElement(tagName, attributes)
-
-  // 设置树根
-  if (!root) {
-    root = ele
-  }
-
-  // 标记当前遍历的父亲
-  if (parent) {
-    ele.parent = parent
-    parent.children.push(ele)
-  }
-
-  stack.push(ele)
-}
-
-function chars(text) {
-  let parent = stack[stack.length - 1]
-  text = text.replace(/\s+/g, '')
-
-  if (text) {
-    parent.children.push({
-      type: TEXT_TYPE,
-      text,
-    })
-  }
-}
-
-function end(tagName) {
-  let last = stack.pop()
-
-  if (last.tag !== tagName) {
-    throw new Error('标签闭合错误')
-  }
-}
-
 export function parserHTML(html) {
+  let root = null // 树的根
+  let stack = []
   // 解析 HTML：开始标签、结束标签、文本
   while (html) {
     let textEnd = html.indexOf('<') // 当前解析的开头
@@ -98,6 +48,45 @@ export function parserHTML(html) {
     if (text) {
       chars(text)
       advance(text.length)
+    }
+  }
+
+  // 将解析后的结果组装成一个栈，构建树
+  function start(tagName, attributes) {
+    let parent = stack[stack.length - 1]
+    let ele = createASTElement(tagName, attributes)
+
+    // 设置树根
+    if (!root) {
+      root = ele
+    }
+
+    // 标记当前遍历的父亲
+    if (parent) {
+      ele.parent = parent
+      parent.children.push(ele)
+    }
+
+    stack.push(ele)
+  }
+
+  function chars(text) {
+    let parent = stack[stack.length - 1]
+    text = text.replace(/\s+/g, '')
+
+    if (text) {
+      parent.children.push({
+        type: TEXT_TYPE,
+        text,
+      })
+    }
+  }
+
+  function end(tagName) {
+    let last = stack.pop()
+
+    if (last.tag !== tagName) {
+      throw new Error('标签闭合错误')
     }
   }
 
@@ -138,6 +127,17 @@ export function parserHTML(html) {
     }
 
     return false
+  }
+
+  // 创建 AST
+  function createASTElement(tagName, attrs) {
+    return {
+      tag: tagName,
+      type: ELEMENT_TYPE,
+      children: [],
+      attrs,
+      parent: null,
+    }
   }
 
   return root

@@ -1,14 +1,14 @@
-import { mergeOptions } from "../utils"
+import { mergeOptions } from '../utils'
 
 export function initExtend(Vue) {
-  Vue.extend = function(opts) {
+  Vue.extend = function (opts = {}) {
     // 原型继承
     const Super = this
-    const Sub = function VueComponent() {
-      this._init()
+    const Sub = function VueComponent(options) {
+      this._init(options)
     }
 
-    Sub.prototype = Object.create(Super)
+    Sub.prototype = Object.create(Super.prototype)
     Sub.prototype.constructor = Sub
     // 与父类选项进行合并
     Sub.options = mergeOptions(Super.options, opts)

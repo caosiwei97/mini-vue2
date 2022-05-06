@@ -2,6 +2,12 @@ import { LIFECYCLE_HOOKS } from './shared/constants'
 
 const strats = {}
 
+// 默认合并策略
+const defaultStrat = function (parentVal, childVal) {
+  return childVal === undefined ? parentVal : childVal
+}
+
+// 生命周期钩子的合并策略
 LIFECYCLE_HOOKS.forEach((hook) => {
   strats[hook] = mergeHook
 })
@@ -13,10 +19,8 @@ strats.data =
       return { ...parentVal, ...childVal }
     }
 
-strats._base = function (parentVal, childVal) {
-  return parentVal
-}
-
+// 组件选项合并：每个组件选项对象的原型都指向 Vue.options.components
+// 这就是为啥能在子组件使用全局组件的原因
 strats.components = function (parentVal, childVal) {
   const options = Object.create(parentVal)
 
@@ -99,7 +103,7 @@ export function mergeOptions(parent, child) {
     mergeFiled(key)
   }
 
-  // 遍历儿子的 key 且父亲没有的 key
+  // 遍历儿子的 key 且父亲没有的 key ==> 主要防止重复合并
   for (const key in child) {
     if (!hasOwn(parent, key)) {
       mergeFiled(key)
@@ -108,12 +112,17 @@ export function mergeOptions(parent, child) {
 
   function mergeFiled(key) {
     // 找到当前配置的策略
-    const strat = strats[key]
+    const strat = strats[key] || defaultStrat
 
-    if (strat) {
-      options[key] = strat(parent[key], child[key])
-    }
+    options[key] = strat(parent[key], child[key])
   }
 
   return options
+}
+
+// 判断是否 HTML 标签
+export function isReservedTag(str) {
+  const tagStr = 'a,div,span,p,img,button,ul,li,h2'
+  // 源码根据 ',' 生成映射表
+  return tagStr.includes(str)
 }
