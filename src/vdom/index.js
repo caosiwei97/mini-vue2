@@ -22,7 +22,7 @@ function createComponent(vm, tag, data, key, children, Ctor) {
     init(vnode) {
       const vm = (vnode.componentInstance = new Ctor({ _isComponent: true }))
 
-      vm.$el = vm.$mount()
+      vm.$mount()
     },
   }
 

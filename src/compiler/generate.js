@@ -10,7 +10,7 @@ function genProps(attrs) {
       let styleObj = {}
       value.split(';').forEach((item) => {
         let [key, value] = item.split(':')
-        styleObj[key.trim()] = value.trim()
+        styleObj[key?.trim()] = value?.trim()
       })
       value = styleObj
     }
