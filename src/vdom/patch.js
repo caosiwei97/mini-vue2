@@ -75,8 +75,25 @@ function patchChildren(el, oldChildren, newChildren) {
   let newEndIndex = newChildren.length - 1
   let newEndVnode = newChildren[newEndIndex]
 
+  const makeIndexByKey = (children) => {
+    return children.reduce((acc, cur, index) => {
+      if (cur.key) {
+        acc[cur.key] = index
+      }
+      return acc
+    }, {})
+  }
+
+  // 生成映射表 key - index
+  const keyMap = makeIndexByKey(oldChildren)
+
   // 双指针从两端到中间迭代, 有一个结束了就结束了
   while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
+    if (!oldStartVnode) {
+      oldStartVnode = oldChildren[++oldStartIndex]
+    } else if (!oldEndVnode) {
+      oldEndVnode = oldChildren[--oldEndIndex]
+    }
     // 头头比较：两个开始节点对比
     if (isSameVnode(oldStartVnode, newStartVnode)) {
       patch(oldStartVnode, newStartVnode)
@@ -106,6 +123,22 @@ function patchChildren(el, oldChildren, newChildren) {
 
       oldEndVnode = oldChildren[--oldEndIndex]
       newStartVnode = newChildren[++newStartIndex]
+    } else {
+      // 乱序比对 - 核心 (只操作新的指针)
+      const moveIndex = keyMap[newStartVnode.key] // 从新的往老的找
+      if (moveIndex == undefined) {
+        // 直接插入老的节点最前面
+        el.insertBefore(createElm(newEndVnode), oldStartVnode.el)
+      } else {
+        // 要移动的老节点
+        const moveNode = oldChildren[moveIndex]
+        oldChildren[moveIndex] = null // 标识原来位置上节点已经被移动走了
+        el.insertBefore(moveNode.el, oldStartVnode.el)
+        patch(moveNode, newStartVnode) // 移动后进行比对
+      }
+
+      // 移动新节点
+      newStartVnode = newChildren[++newStartIndex]
     }
   }
 
@@ -126,7 +159,7 @@ function patchChildren(el, oldChildren, newChildren) {
   // 迭代完，用户删除了
   if (oldStartIndex <= oldEndIndex) {
     for (let i = oldStartIndex; i <= oldEndIndex; i++) {
-      el.removeChild(oldChildren[i].el)
+      oldChildren[i] && el.removeChild(oldChildren[i].el)
     }
   }
 }

@@ -19,41 +19,41 @@ stateMixin(Vue)
 // 拓展全局 Vue
 initGlobalApi(Vue)
 
-let oldTemp = `<ul>
-  <li key="A">A</li>
-  <li key="B">B</li>
-  <li key="C">C</li>
-  <li key="D">D</li>
-</ul>`
-let newTemp = `<ul>
-  <li key="A">A</li>
-  <li key="D">D</li>
-  <li key="B">B</li>
-  <li key="C">C</li>
-</ul>`
+// let oldTemp = `<ul>
+//   <li key="C">C</li>
+//   <li key="A">A</li>
+//   <li key="B">B</li>
+//   <li key="D">D</li>
+// </ul>`
+// let newTemp = `<ul>
+//   <li key="B">B</li>
+//   <li key="C">C</li>
+//   <li key="D">D</li>
+//     <li key="A">A</li>
+// </ul>`
 
-let oldVm = new Vue({
-  data: {
-    msg: 'hello world',
-  },
-})
+// let oldVm = new Vue({
+//   data: {
+//     msg: 'hello world',
+//   },
+// })
 
-const oldRender = compilerToFunction(oldTemp)
-const oldVnode = oldRender.call(oldVm)
+// const oldRender = compilerToFunction(oldTemp)
+// const oldVnode = oldRender.call(oldVm)
 
-document.body.appendChild(createElm(oldVnode))
+// document.body.appendChild(createElm(oldVnode))
 
-let newVm = new Vue({
-  data: {
-    msg2: 'hello',
-  },
-})
+// let newVm = new Vue({
+//   data: {
+//     msg2: 'hello',
+//   },
+// })
 
-const newRender = compilerToFunction(newTemp)
-const newVnode = newRender.call(newVm)
+// const newRender = compilerToFunction(newTemp)
+// const newVnode = newRender.call(newVm)
 
-setTimeout(() => {
-  patch(oldVnode, newVnode)
-}, 2000)
+// setTimeout(() => {
+//   patch(oldVnode, newVnode)
+// }, 2000)
 
 export default Vue

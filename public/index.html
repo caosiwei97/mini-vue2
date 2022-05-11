@@ -10,7 +10,6 @@
       <h2>hello {{ title }} wolrd</h2>
       <p>{{ bar }}</p>
       <p>{{ fullname }}</p>
-      <my-button></my-button>
     </div>
 
     <script src="/dist/umd/vue.js"></script>
@@ -66,6 +65,10 @@
           },
         },
       }).$mount('#app')
+
+      setTimeout(() => {
+        vm.title = 'vue'
+      }, 1000)
     </script>
   </body>
 </html>

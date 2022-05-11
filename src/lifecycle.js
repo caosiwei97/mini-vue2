@@ -6,8 +6,16 @@ export function lifecycleMixin(Vue) {
   // 更新视图
   Vue.prototype._update = function (vnode) {
     const vm = this
+    const prevnode = vm._vnode // 保存当前的虚拟节点
 
-    vm.$el = patch(vm.$el, vnode)
+    if (!prevnode) {
+      vm.$el = patch(vm.$el, vnode)
+      vm._vnode = vnode
+    } else {
+      vm.$el = patch(prevnode, vnode)
+    }
+
+    vm._vnode = vnode
   }
 
   // 异步更新
